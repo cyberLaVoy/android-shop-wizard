@@ -4,27 +4,18 @@ package com.example.cyberlavoy.shopwizard;
  * Created by CyberLaVoy on 8/11/2018.
  */
 
-public class ShoppingItem {
-    private Item mItem;
+public class ShoppingItem extends Item {
     private String mQuantity;
     private String mQuantityType;
     private int mNumRecipesReferenced;
     private boolean mGrabbed;
 
-    public ShoppingItem(Item item, String quantity, String quantityType, int numRecipesReferenced, boolean grabbed) {
-        mItem = item;
-        mQuantity = quantity;
-        mQuantityType = quantityType;
-        mNumRecipesReferenced = numRecipesReferenced;
-        mGrabbed = grabbed;
-    }
-
-    public Item getItem() {
-        return mItem;
-    }
-
-    public void setItem(Item item) {
-        mItem = item;
+    public ShoppingItem(int itemId, String label, String category, String quantity, String quantityType, int numRecipesReferenced, boolean grabbed) {
+        super(itemId, label, category);
+        setQuantity(quantity);
+        setQuantityType(quantityType);
+        setNumRecipesReferenced(numRecipesReferenced);
+        setGrabbed(grabbed);
     }
 
     public String getQuantity() {

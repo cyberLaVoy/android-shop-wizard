@@ -4,23 +4,14 @@ package com.example.cyberlavoy.shopwizard;
  * Created by CyberLaVoy on 8/11/2018.
  */
 
-public class RecipeIngredient {
-    private Item mItem;
+public class RecipeIngredient extends Item {
     private String mQuantity;
     private String mQuantityType;
 
-    public RecipeIngredient(Item item, String quantity, String quantityType) {
-        mItem = item;
-        mQuantity = quantity;
-        mQuantityType = quantityType;
-    }
-
-    public Item getItem() {
-        return mItem;
-    }
-
-    public void setItem(Item item) {
-        mItem = item;
+    public RecipeIngredient(int itemId, String label, String category, String quantity, String quantityType) {
+        super(itemId, label, category);
+        setQuantity(quantity);
+        setQuantityType(quantityType);
     }
 
     public String getQuantity() {

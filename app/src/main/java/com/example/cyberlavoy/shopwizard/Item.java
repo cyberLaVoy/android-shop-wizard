@@ -10,9 +10,9 @@ public class Item {
     private String mCategory;
 
     public Item(int itemId, String label, String category) {
-        mItemId = itemId;
-        mLabel = label;
-        mCategory = category;
+        setItemId(itemId);
+        setLabel(label);
+        setCategory(category);
     }
 
     public int getItemId() {
