@@ -36,4 +36,16 @@ public class Item {
     public void setCategory(String category) {
         mCategory = category;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Item)) {
+            return false;
+        }
+        Item other = (Item)obj;
+        return this.mItemId == other.mItemId;
+    }
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static String apiUrl = "https://stormy-everglades-69504.herokuapp.com";
+    private String apiUrl = "https://stormy-everglades-69504.herokuapp.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

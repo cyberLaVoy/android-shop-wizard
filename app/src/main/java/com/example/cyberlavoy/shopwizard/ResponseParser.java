@@ -29,7 +29,10 @@ public class ResponseParser {
                 String itemLabel = (String) itemObject.get("label");
                 String itemCategory = (String) itemObject.get("category");
                 Item item = new Item(itemId, itemLabel, itemCategory);
-                ListStore.getInstance(mContext).addItem(item);
+                ListStore listStore = ListStore.getInstance(mContext);
+                if (! listStore.getItems().contains(item)) {
+                    listStore.addItem(item);
+                }
             }
 
         } catch (JSONException je){
