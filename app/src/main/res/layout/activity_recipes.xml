@@ -7,7 +7,7 @@
     tools:context="com.example.cyberlavoy.shopwizard.HomeActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/items_recycler_view"
+        android:id="@+id/recipes_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_item_floating_action_btn"
+        android:id="@+id/add_recipe_floating_action_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -27,16 +27,15 @@
         app:srcCompat="@drawable/ic_add_black"
         tools:ignore="VectorDrawableCompat" />
 
-    <Button
-        android:id="@+id/submit_checked_items_btn"
-        style="@style/Widget.AppCompat.Button.Colored"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/submit_checked_recipes_floating_action_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:layout_marginStart="32dp"
-        android:text="Done"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:layout_marginEnd="32dp"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_check_black"
+        tools:ignore="VectorDrawableCompat" />
 </android.support.constraint.ConstraintLayout>

@@ -20,4 +20,16 @@ public class Recipe extends ItemList {
     public void setInstructions(String instructions) {
         mInstructions = instructions;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Recipe)) {
+            return false;
+        }
+        Recipe other = (Recipe)obj;
+        return this.getListId() == other.getListId();
+    }
 }

@@ -30,6 +30,10 @@ public class ItemList {
         }
     }
 
+    public ArrayList getItems() {
+        return mItems;
+    }
+
     public int getListId() {
         return mListId;
     }

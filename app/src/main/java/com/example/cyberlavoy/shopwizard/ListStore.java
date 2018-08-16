@@ -29,6 +29,11 @@ public class ListStore {
         mShoppingLists = new ArrayList<>();
         mRecipes = new ArrayList<>();
     }
+    public void resetStore() {
+        mItems = new ArrayList<>();
+        mShoppingLists = new ArrayList<>();
+        mRecipes = new ArrayList<>();
+    }
 
     public void addItem(Item item) {
         mItems.add(item);
@@ -45,6 +50,7 @@ public class ListStore {
             Item item = i.next();
             if (item.getItemId() == itemId) {
                 mItems.remove(item);
+                break;
             }
         }
     }
@@ -53,6 +59,7 @@ public class ListStore {
             Recipe recipe = i.next();
             if (recipe.getListId() == recipeId) {
                 mRecipes.remove(recipe);
+                break;
             }
         }
     }
@@ -61,6 +68,7 @@ public class ListStore {
             ShoppingList shoppingList = i.next();
             if (shoppingList.getListId() == shoppingListId) {
                 mShoppingLists.remove(shoppingList);
+                break;
             }
         }
     }
@@ -75,5 +83,15 @@ public class ListStore {
 
     public ArrayList<Recipe> getRecipes() {
         return mRecipes;
+    }
+
+    public ShoppingList getShoppingList(int shoppingListId) {
+        for (Iterator<ShoppingList> i = mShoppingLists.iterator(); i.hasNext();) {
+            ShoppingList shoppingList = i.next();
+            if (shoppingList.getListId() == shoppingListId) {
+                return shoppingList;
+            }
+        }
+        return null;
     }
 }

@@ -198,8 +198,14 @@ public class RequestHandler {
         };
         addToRequestQueue(stringRequest);
     }
-        public void handleDELETERequest(String url, Map<String, String> body, @Nullable final String[] onResponseArray, @Nullable final Callable<Integer> onResponseCallBack) {
-        final String requestBody = mapBodyToQS(body);
+        public void handleDELETERequest(String url, @Nullable Map<String, String> body, @Nullable final String[] onResponseArray, @Nullable final Callable<Integer> onResponseCallBack) {
+        final String requestBody;
+        if (body != null) {
+            requestBody = mapBodyToQS(body);
+        }
+        else {
+            requestBody = null;
+        }
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

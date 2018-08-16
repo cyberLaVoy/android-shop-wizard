@@ -7,7 +7,7 @@
     tools:context="com.example.cyberlavoy.shopwizard.HomeActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/items_recycler_view"
+        android:id="@+id/shopping_lists_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_item_floating_action_btn"
+        android:id="@+id/add_shopping_list_floating_action_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -26,17 +26,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_black"
         tools:ignore="VectorDrawableCompat" />
-
-    <Button
-        android:id="@+id/submit_checked_items_btn"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:layout_marginStart="32dp"
-        android:text="Done"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>

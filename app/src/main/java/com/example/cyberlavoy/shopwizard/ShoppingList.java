@@ -10,4 +10,15 @@ public class ShoppingList extends ItemList {
         super(shoppingListId, label);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof ShoppingList)) {
+            return false;
+        }
+        ShoppingList other = (ShoppingList) obj;
+        return this.getListId() == other.getListId();
+    }
 }

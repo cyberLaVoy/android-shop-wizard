@@ -1,5 +1,6 @@
 package com.example.cyberlavoy.shopwizard;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -20,19 +23,21 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class ItemsActivity extends AppCompatActivity {
-
     private static final String EXTRA_ADDING_ITEMS_TO_LIST = "com.example.cyberlavoy.shopwizard.adding_items_to_list";
-    private String apiUrl = "https://stormy-everglades-69504.herokuapp.com";
+    private String apiItemsResourseUrl = "https://stormy-everglades-69504.herokuapp.com/ingredients";
     private boolean mAddingItemsToList;
     RecyclerView mItemsRecyclerView;
-    FloatingActionButton mFloatingActionButton;
+    FloatingActionButton mAddItemFloatingActionButton;
+    Button mSubmitItemsButton;
     private ItemsAdapter mAdapter;
+    private List<Integer> mSelectedItemsIds = new ArrayList<>();
 
     public static Intent newIntent(Context packageContext, boolean addingItemsToList) {
         Intent intent = new Intent(packageContext, ItemsActivity.class);
@@ -45,16 +50,29 @@ public class ItemsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
         mAddingItemsToList = getIntent().getBooleanExtra(EXTRA_ADDING_ITEMS_TO_LIST, false);
-        mFloatingActionButton = findViewById(R.id.add_item_floating_action_btn);
+        mAddItemFloatingActionButton = findViewById(R.id.add_item_floating_action_btn);
+        mSubmitItemsButton = findViewById(R.id.submit_checked_items_btn);
         mItemsRecyclerView = findViewById(R.id.items_recycler_view);
         mItemsRecyclerView.setLayoutManager(new LinearLayoutManager(ItemsActivity.this));
-        updateUI();
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        mAddItemFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddItemDialog(ItemsActivity.this);
             }
         });
+        mSubmitItemsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result", mSelectedItemsIds.toString());
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+            }
+        });
+        if (!mAddingItemsToList) {
+            mSubmitItemsButton.setVisibility(View.GONE);
+        }
+        updateUI();
     }
     private void showAddItemDialog(Context context) {
         AlertDialog dialog = new AlertDialog.Builder(context)
@@ -82,7 +100,7 @@ public class ItemsActivity extends AppCompatActivity {
         requestBody.put("label", label);
         requestBody.put("category", category);
         final String[] responseArray = new String[1];
-        RequestHandler.getInstance(getApplicationContext()).handlePOSTRequest(apiUrl + "/ingredients", requestBody, responseArray, new Callable<Integer>() {
+        RequestHandler.getInstance(getApplicationContext()).handlePOSTRequest(apiItemsResourseUrl, requestBody, responseArray, new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
                 JSONObject itemJsonObject = new JSONObject(responseArray[0]);
@@ -91,6 +109,27 @@ public class ItemsActivity extends AppCompatActivity {
                 return null;
             }
         });
+    }
+    private void showDeleteItemDialog(Context context, int itemId) {
+        final int itemIdAccess = itemId;
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle("Confirm item deletion.")
+                .setView(R.layout.delete_item_warning_dialog)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteItem(itemIdAccess);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        dialog.show();
+    }
+    private void deleteItem(int itemId) {
+        mSelectedItemsIds.remove(Integer.valueOf(itemId));
+        ListStore.getInstance(getApplicationContext()).removeItem(itemId);
+        updateUI();
+        RequestHandler.getInstance(getApplicationContext()).handleDELETERequest(apiItemsResourseUrl+"/"+Integer.toString(itemId), null, null, null);
     }
 
     private void updateUI() {
@@ -109,12 +148,14 @@ public class ItemsActivity extends AppCompatActivity {
         Item mItem;
         TextView mItemLabelTextView;
         TextView mItemCategoryTextView;
+        CheckBox mItemSelectionCheckBox;
         ImageButton mDeleteItemBtn;
 
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
-            mItemLabelTextView = itemView.findViewById(R.id.item_list_item_label);
+            mItemLabelTextView = itemView.findViewById(R.id.shopping_list_item_label);
             mItemCategoryTextView = itemView.findViewById(R.id.item_list_item_category);
+            mItemSelectionCheckBox = itemView.findViewById(R.id.item_selection_check_box);
             mDeleteItemBtn = itemView.findViewById(R.id.delete_item_btn);
             itemView.setOnClickListener(this);
         }
@@ -126,13 +167,28 @@ public class ItemsActivity extends AppCompatActivity {
             mDeleteItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(ItemsActivity.this, Integer.toString(mItem.getItemId()), Toast.LENGTH_SHORT).show();
+                    showDeleteItemDialog(ItemsActivity.this, mItem.getItemId());
                 }
             });
+            if (mAddingItemsToList) {
+                mItemSelectionCheckBox.setChecked(mSelectedItemsIds.contains(item.getItemId()));
+            }
+            else {
+               mItemSelectionCheckBox.setVisibility(View.GONE);
+            }
         }
 
         @Override
         public void onClick(View view) {
+            if (mAddingItemsToList) {
+                if (!mSelectedItemsIds.contains(mItem.getItemId())) {
+                    mSelectedItemsIds.add(mItem.getItemId());
+                    mItemSelectionCheckBox.setChecked(true);
+                } else {
+                    mSelectedItemsIds.remove(Integer.valueOf(mItem.getItemId()));
+                    mItemSelectionCheckBox.setChecked(false);
+                }
+            }
         }
     }
 
@@ -163,6 +219,4 @@ public class ItemsActivity extends AppCompatActivity {
             mItems = items;
         }
     }
-
-
 }
