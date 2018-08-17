@@ -80,12 +80,6 @@ public class EditShoppingListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        resetShoppingList();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == mAddItemsResultCode) {
             if(resultCode == Activity.RESULT_OK){

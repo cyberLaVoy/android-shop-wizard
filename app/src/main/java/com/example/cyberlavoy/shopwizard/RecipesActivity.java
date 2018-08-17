@@ -109,11 +109,18 @@ public class RecipesActivity extends AppCompatActivity {
             RecipeView.setOnClickListener(this);
         }
 
-        public void bind(Recipe Recipe) {
-            mRecipe = Recipe;
-            mRecipeLabelTextView.setText(Recipe.getLabel());
+        public void bind(final Recipe recipe) {
+            mRecipe = recipe;
+            mRecipeLabelTextView.setText(recipe.getLabel());
+            mEditRecipeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = EditRecipeActivity.newIntent(RecipesActivity.this, recipe.getListId());
+                    startActivity(intent);
+                }
+            });
             if (mAddingRecipesToList) {
-                mRecipeSelectionCheckBox.setChecked(mSelectedRecipesIds.contains(Recipe.getListId()));
+                mRecipeSelectionCheckBox.setChecked(mSelectedRecipesIds.contains(recipe.getListId()));
                 mEditRecipeBtn.setVisibility(View.GONE);
             }
             else {

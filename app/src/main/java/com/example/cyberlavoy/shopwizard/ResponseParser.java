@@ -68,6 +68,29 @@ public class ResponseParser {
             Log.e(TAG, "Failed to parse JSON", je);
         }
     }
+    public Recipe parseRecipeJSONString(String jsonString) throws JSONException {
+        JSONObject recipeObject = new JSONObject(jsonString);
+        int recipeId = recipeObject.getInt("recipe_id");
+        String recipeLabel = recipeObject.getString("label");
+        String recipeInstructions = recipeObject.getString("instructions");
+        Recipe recipe = new Recipe(recipeId, recipeLabel, recipeInstructions);
+        JSONArray recipeIngredients = recipeObject.getJSONArray("ingredients");
+        for (int j = 0; j < recipeIngredients.length(); j++) {
+            JSONObject ingredient = recipeIngredients.getJSONObject(j);
+            int ingredientId = ingredient.getInt("ingredient_id");
+            String ingredientLabel = ingredient.getString("label");
+            String category = ingredient.getString("category");
+            String quantity = ingredient.getString("quantity");
+            String quantityType = ingredient.getString("quantity_type");
+            RecipeIngredient recipeIngredient = new RecipeIngredient(ingredientId, ingredientLabel, category, quantity, quantityType);
+            recipe.addItem(recipeIngredient);
+        }
+        ListStore listStore = ListStore.getInstance(mContext);
+        if (! listStore.getRecipes().contains(recipe)) {
+            listStore.addRecipe(recipe);
+        }
+        return recipe;
+    }
     public void parseShoppingListsJSONString(String jsonString) {
         try {
             JSONObject shoppingListsObject = new JSONObject(jsonString);
