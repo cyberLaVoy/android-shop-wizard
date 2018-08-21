@@ -5,50 +5,47 @@
     android:layout_height="wrap_content">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/shopping_list_card"
-        android:layout_width="wrap_content"
+        android:id="@+id/item_label_wrapper"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item_selection_check_box"
+        app:layout_constraintStart_toEndOf="@id/shopping_list_item_check_box"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/shopping_list_item_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Apples"
+            android:text="Honey Crisp Apples"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/right_constraint_layout"
-        android:layout_width="wrap_content"
+        android:id="@+id/item_category_wrapper"
+        android:layout_width="85dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/shopping_list_card"
+        app:layout_constraintStart_toEndOf="@+id/item_label_wrapper"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/item_list_item_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="Produce"
+            android:textColor="@android:color/black"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/category_tag" />
 
@@ -56,11 +53,9 @@
             android:id="@+id/category_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="category"
             android:textSize="8sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
@@ -77,7 +72,7 @@
         android:id="@+id/delete_item_btn"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="40dp"
-        android:layout_height="0dp"
+        android:layout_height="45dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,7 +80,7 @@
         app:srcCompat="@drawable/ic_delete_forever_black" />
 
     <CheckBox
-        android:id="@+id/item_selection_check_box"
+        android:id="@+id/shopping_list_item_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

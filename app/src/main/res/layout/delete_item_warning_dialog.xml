@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:padding="16dp"
-        android:text="WARNING: deleting item will remove item from all shopping lists or recipes, if previously added."
+        android:text="This item type must be removed from all recipes/shopping lists it has been previously added to, before deletion."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -76,13 +76,7 @@ public class ResponseParser {
         Recipe recipe = new Recipe(recipeId, recipeLabel, recipeInstructions);
         JSONArray recipeIngredients = recipeObject.getJSONArray("ingredients");
         for (int j = 0; j < recipeIngredients.length(); j++) {
-            JSONObject ingredient = recipeIngredients.getJSONObject(j);
-            int ingredientId = ingredient.getInt("ingredient_id");
-            String ingredientLabel = ingredient.getString("label");
-            String category = ingredient.getString("category");
-            String quantity = ingredient.getString("quantity");
-            String quantityType = ingredient.getString("quantity_type");
-            RecipeIngredient recipeIngredient = new RecipeIngredient(ingredientId, ingredientLabel, category, quantity, quantityType);
+            RecipeIngredient recipeIngredient = parseRecipeIngredientJSONString(recipeIngredients.getString(j));
             recipe.addItem(recipeIngredient);
         }
         ListStore listStore = ListStore.getInstance(mContext);
@@ -91,6 +85,16 @@ public class ResponseParser {
         }
         return recipe;
     }
+    public RecipeIngredient parseRecipeIngredientJSONString(String jsonString) throws JSONException {
+        JSONObject ingredient = new JSONObject(jsonString);
+        int ingredientId = ingredient.getInt("ingredient_id");
+        String ingredientLabel = ingredient.getString("label");
+        String category = ingredient.getString("category");
+        String quantity = ingredient.getString("quantity");
+        String quantityType = ingredient.getString("quantity_type");
+        return new RecipeIngredient(ingredientId, ingredientLabel, category, quantity, quantityType);
+    }
+
     public void parseShoppingListsJSONString(String jsonString) {
         try {
             JSONObject shoppingListsObject = new JSONObject(jsonString);
@@ -129,7 +133,6 @@ public class ResponseParser {
         String quantityType = item.getString("quantity_type");
         int numRecipesReferenced = item.getInt("num_recipes_referenced");
         boolean grabbed = item.getBoolean("grabbed");
-        ShoppingItem shoppingItem = new ShoppingItem(itemId, itemLabel, category, quantity, quantityType, numRecipesReferenced, grabbed);
-        return shoppingItem;
+        return new ShoppingItem(itemId, itemLabel, category, quantity, quantityType, numRecipesReferenced, grabbed);
     }
 }

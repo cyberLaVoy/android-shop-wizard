@@ -11,7 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,7 +22,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -34,8 +36,7 @@ public class ItemsActivity extends AppCompatActivity {
     private String apiItemsResourseUrl = "https://stormy-everglades-69504.herokuapp.com/ingredients";
     private boolean mAddingItemsToList;
     RecyclerView mItemsRecyclerView;
-    FloatingActionButton mAddItemFloatingActionButton;
-    Button mSubmitItemsButton;
+    FloatingActionButton mSubmitItemsButton;
     private ItemsAdapter mAdapter;
     private List<Integer> mSelectedItemsIds = new ArrayList<>();
 
@@ -50,16 +51,9 @@ public class ItemsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
         mAddingItemsToList = getIntent().getBooleanExtra(EXTRA_ADDING_ITEMS_TO_LIST, false);
-        mAddItemFloatingActionButton = findViewById(R.id.add_item_floating_action_btn);
         mSubmitItemsButton = findViewById(R.id.submit_checked_items_btn);
         mItemsRecyclerView = findViewById(R.id.items_recycler_view);
         mItemsRecyclerView.setLayoutManager(new LinearLayoutManager(ItemsActivity.this));
-        mAddItemFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddItemDialog(ItemsActivity.this);
-            }
-        });
         mSubmitItemsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +67,21 @@ public class ItemsActivity extends AppCompatActivity {
             mSubmitItemsButton.setVisibility(View.GONE);
         }
         updateUI();
+    }
+     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.items_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_new_item_type_menu_btn:
+                showAddItemDialog(ItemsActivity.this);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     private void showAddItemDialog(Context context) {
         AlertDialog dialog = new AlertDialog.Builder(context)
@@ -110,26 +119,32 @@ public class ItemsActivity extends AppCompatActivity {
             }
         });
     }
-    private void showDeleteItemDialog(Context context, int itemId) {
-        final int itemIdAccess = itemId;
+    private void showItemDeletionFailureDialog(Context context) {
         AlertDialog dialog = new AlertDialog.Builder(context)
-                .setTitle("Confirm item deletion.")
                 .setView(R.layout.delete_item_warning_dialog)
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteItem(itemIdAccess);
-                    }
-                })
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Okay", null)
                 .create();
         dialog.show();
     }
-    private void deleteItem(int itemId) {
-        mSelectedItemsIds.remove(Integer.valueOf(itemId));
-        ListStore.getInstance(getApplicationContext()).removeItem(itemId);
-        updateUI();
-        RequestHandler.getInstance(getApplicationContext()).handleDELETERequest(apiItemsResourseUrl+"/"+Integer.toString(itemId), null, null, null);
+    private void deleteItem(final int itemId) {
+
+        final String[] responseArray = new String[2];
+        RequestHandler.getInstance(getApplicationContext()).handleDELETERequest(apiItemsResourseUrl + "/" + Integer.toString(itemId), null, responseArray, new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                int responseCode = Integer.parseInt(responseArray[1]);
+                Log.e("response code", responseArray[1]);
+                if (responseCode == 200) {
+                    mSelectedItemsIds.remove(Integer.valueOf(itemId));
+                    ListStore.getInstance(getApplicationContext()).removeItem(itemId);
+                    updateUI();
+                }
+                else {
+                   showItemDeletionFailureDialog(ItemsActivity.this);
+                }
+                return null;
+            }
+        });
     }
 
     private void updateUI() {
@@ -155,7 +170,7 @@ public class ItemsActivity extends AppCompatActivity {
             super(itemView);
             mItemLabelTextView = itemView.findViewById(R.id.shopping_list_item_label);
             mItemCategoryTextView = itemView.findViewById(R.id.item_list_item_category);
-            mItemSelectionCheckBox = itemView.findViewById(R.id.item_selection_check_box);
+            mItemSelectionCheckBox = itemView.findViewById(R.id.shopping_list_item_check_box);
             mDeleteItemBtn = itemView.findViewById(R.id.delete_item_btn);
             itemView.setOnClickListener(this);
         }
@@ -167,7 +182,7 @@ public class ItemsActivity extends AppCompatActivity {
             mDeleteItemBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showDeleteItemDialog(ItemsActivity.this, mItem.getItemId());
+                    deleteItem(mItem.getItemId());
                 }
             });
             if (mAddingItemsToList) {

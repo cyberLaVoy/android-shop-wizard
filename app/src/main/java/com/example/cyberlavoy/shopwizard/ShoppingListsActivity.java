@@ -8,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -22,7 +25,6 @@ import java.util.concurrent.Callable;
 public class ShoppingListsActivity extends AppCompatActivity {
     private String apiShoppingListsResourceUrl = "https://stormy-everglades-69504.herokuapp.com/groceries";
     RecyclerView mShoppingListsRecyclerView;
-    FloatingActionButton mAddShoppingListFloatingActionButton;
     private ShoppingListsAdapter mAdapter;
 
     public static Intent newIntent(Context packageContext) {
@@ -34,15 +36,29 @@ public class ShoppingListsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_lists);
-        mAddShoppingListFloatingActionButton = findViewById(R.id.add_shopping_list_floating_action_btn);
         mShoppingListsRecyclerView = findViewById(R.id.shopping_lists_recycler_view);
         mShoppingListsRecyclerView.setLayoutManager(new LinearLayoutManager(ShoppingListsActivity.this));
-        mAddShoppingListFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
         updateUI();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.shopping_lists_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_new_shopping_list_menu_btn:
+                postNewShoppingList();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void postNewShoppingList() {
@@ -52,11 +68,15 @@ public class ShoppingListsActivity extends AppCompatActivity {
             public Integer call() throws Exception {
                 JSONObject ShoppingListJsonObject = new JSONObject(responseArray[0]);
                 int shoppingListId = Integer.parseInt(ShoppingListJsonObject.getString("list_id"));
+                startEditShoppingListActity(shoppingListId);
                 return null;
             }
         });
     }
-
+    private void startEditShoppingListActity(int shoppingListId) {
+        Intent intent = EditShoppingListActivity.newIntent(ShoppingListsActivity.this, shoppingListId);
+        startActivity(intent);
+    }
     private void updateUI() {
         List<ShoppingList> ShoppingLists = ListStore.getInstance(getApplicationContext()).getShoppingLists();
         if (mAdapter == null) {

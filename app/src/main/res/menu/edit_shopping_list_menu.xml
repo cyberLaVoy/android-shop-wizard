@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/edit_shopping_list_delete_list_menu_btn"
+        android:icon="@drawable/ic_delete_forever_black"
+        android:title="delete recipe"
+        app:showAsAction="always" />
+</menu>

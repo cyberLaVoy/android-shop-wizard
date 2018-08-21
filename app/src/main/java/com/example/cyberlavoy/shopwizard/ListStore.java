@@ -1,6 +1,7 @@
 package com.example.cyberlavoy.shopwizard;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,10 +40,10 @@ public class ListStore {
         mItems.add(item);
     }
     public void addRecipe(Recipe recipe) {
-        mRecipes.add(recipe);
+        mRecipes.add(0, recipe);
     }
     public void addShoppingList(ShoppingList shoppingList) {
-        mShoppingLists.add(shoppingList);
+        mShoppingLists.add(0, shoppingList);
     }
 
     public void removeItem(int itemId) {
@@ -79,6 +80,15 @@ public class ListStore {
 
     public ArrayList<ShoppingList> getShoppingLists() {
         return mShoppingLists;
+    }
+    public Recipe getRecipe(int recipeId) {
+        for (Iterator<Recipe> i = mRecipes.iterator(); i.hasNext();) {
+            Recipe recipe = i.next();
+            if (recipe.getListId() == recipeId) {
+                return recipe;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Recipe> getRecipes() {

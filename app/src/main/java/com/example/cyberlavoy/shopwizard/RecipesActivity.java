@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -28,7 +30,6 @@ public class RecipesActivity extends AppCompatActivity {
     private String apiRecipesResourseUrl = "https://stormy-everglades-69504.herokuapp.com/recipes";
     private boolean mAddingRecipesToList;
     RecyclerView mRecipesRecyclerView;
-    FloatingActionButton mAddRecipeFloatingActionButton;
     FloatingActionButton mSubmitRecipesFloatingActionButton;
     private RecipesAdapter mAdapter;
     private List<Integer> mSelectedRecipesIds = new ArrayList<>();
@@ -44,15 +45,9 @@ public class RecipesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
         mAddingRecipesToList = getIntent().getBooleanExtra(EXTRA_ADDING_RECIPES_TO_LIST, false);
-        mAddRecipeFloatingActionButton = findViewById(R.id.add_recipe_floating_action_btn);
         mSubmitRecipesFloatingActionButton = findViewById(R.id.submit_checked_recipes_floating_action_btn);
         mRecipesRecyclerView = findViewById(R.id.recipes_recycler_view);
         mRecipesRecyclerView.setLayoutManager(new LinearLayoutManager(RecipesActivity.this));
-        mAddRecipeFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
         mSubmitRecipesFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,10 +60,29 @@ public class RecipesActivity extends AppCompatActivity {
         if (!mAddingRecipesToList) {
             mSubmitRecipesFloatingActionButton.setVisibility(View.GONE);
         }
-        else {
-            mAddRecipeFloatingActionButton.setVisibility(View.GONE);
-        }
         updateUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.recipes_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_new_recipe_menu_btn:
+                postNewRecipe();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void postNewRecipe() {
@@ -78,9 +92,14 @@ public class RecipesActivity extends AppCompatActivity {
             public Integer call() throws Exception {
                 JSONObject RecipeJsonObject = new JSONObject(responseArray[0]);
                 int recipeId = Integer.parseInt(RecipeJsonObject.getString("recipe_id"));
+                startEditRecipeActity(recipeId);
                 return null;
             }
         });
+    }
+    private void startEditRecipeActity(int recipeId) {
+        Intent intent = EditRecipeActivity.newIntent(RecipesActivity.this, recipeId);
+        startActivity(intent);
     }
 
     private void updateUI() {

@@ -64,7 +64,7 @@ public class RequestHandler {
         Map<String, String> responseHeaders = response.headers;
         mSessionCookie = responseHeaders.get("Set-Cookie");
     }
-    private String mapBodyToQS(Map<String, String> body) {
+    public String mapBodyToQS(Map<String, String> body) {
         String parsedString = "";
         for (Map.Entry<String,String> entry : body.entrySet())
             parsedString += entry.getKey() + "=" + entry.getValue() + "&";
@@ -102,7 +102,13 @@ public class RequestHandler {
     }
 
     public void handlePOSTRequest(String url, Map<String, String> body, @Nullable final String[] onResponseArray, @Nullable final Callable<Integer> onResponseCallBack) {
-        final String requestBody = mapBodyToQS(body);
+        final String requestBody;
+        if (body != null) {
+            requestBody = mapBodyToQS(body);
+        }
+        else {
+            requestBody = null;
+        }
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -155,8 +161,14 @@ public class RequestHandler {
         addToRequestQueue(stringRequest);
     }
 
-    public void handlePUTRequest(String url, Map<String, String> body, @Nullable final String[] onResponseArray, @Nullable final Callable<Integer> onResponseCallBack) {
-        final String requestBody = mapBodyToQS(body);
+    public void handlePUTRequest(String url, @Nullable Map<String, String> body, @Nullable final String[] onResponseArray, @Nullable final Callable<Integer> onResponseCallBack) {
+        final String requestBody;
+        if (body != null) {
+            requestBody = mapBodyToQS(body);
+        }
+        else {
+            requestBody = null;
+        }
         StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -198,7 +210,7 @@ public class RequestHandler {
         };
         addToRequestQueue(stringRequest);
     }
-        public void handleDELETERequest(String url, @Nullable Map<String, String> body, @Nullable final String[] onResponseArray, @Nullable final Callable<Integer> onResponseCallBack) {
+    public void handleDELETERequest(String url, @Nullable Map<String, String> body, @Nullable final String[] onResponseArray, @Nullable final Callable<Integer> onResponseCallBack) {
         final String requestBody;
         if (body != null) {
             requestBody = mapBodyToQS(body);
@@ -210,7 +222,7 @@ public class RequestHandler {
             @Override
             public void onResponse(String response) {
                 if (onResponseArray != null) {
-                    onResponseArray[0] = response.toString();
+                    onResponseArray[0] = response;
                 }
                 if (onResponseCallBack != null) {
                     try {
@@ -234,10 +246,26 @@ public class RequestHandler {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
+                    Log.e(TAG, requestBody);
                     return requestBody == null ? null : requestBody.getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
                     VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
                     return null;
+                }
+            }
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                setSessionCookie(response);
+                try {
+                    String responseBody = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    if (onResponseArray != null) {
+                        if (onResponseArray.length >= 2) {
+                            onResponseArray[1] = String.valueOf(response.statusCode);
+                        }
+                    }
+                    return Response.success(responseBody, HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
                 }
             }
             @Override

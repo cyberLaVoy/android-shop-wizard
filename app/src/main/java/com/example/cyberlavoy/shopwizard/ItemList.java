@@ -11,11 +11,20 @@ public class ItemList {
     private int mListId;
     private String mLabel;
     private ArrayList mItems;
+    private boolean mUpdated = false;
 
     public ItemList(int listId, String label) {
         mListId = listId;
         mLabel = label;
         mItems = new ArrayList<Item>();
+    }
+
+    public boolean isUpdated() {
+        return mUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        mUpdated = updated;
     }
 
     public void addItem(Item item) {
@@ -26,8 +35,18 @@ public class ItemList {
             Item item = i.next();
             if (item.getItemId() == itemId) {
                 mItems.remove(item);
+                break;
             }
         }
+    }
+    public Item getItem(int itemId) {
+        for (Iterator<Item> i = mItems.iterator(); i.hasNext();) {
+            Item item = i.next();
+            if (item.getItemId() == itemId) {
+                return item;
+            }
+        }
+        return null;
     }
 
     public ArrayList getItems() {
